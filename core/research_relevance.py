@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sqlite3
 from sqlalchemy import create_engine
 
-def get_research_relevance_table(db_path='../data/research.db',
+def get_research_relevance_table(db_path='../data/db.sqlite3',
                                  show=False):
     """ outputs a table with columns: title, author, university, journal, 
         year published, local/international, citations
@@ -47,7 +47,7 @@ def get_research_relevance_table(db_path='../data/research.db',
     return df.to_json(orient='columns')
 
 
-def get_research_relevance_scope(db_path='../data/research.db', plot=False):
+def get_research_relevance_scope(db_path='../data/db.sqlite3', plot=False):
     """ counts the number of local vs international published journal
     
     Parameters
@@ -83,7 +83,7 @@ def get_research_relevance_scope(db_path='../data/research.db', plot=False):
     return df.to_json(orient='columns')
 
 
-def get_research_relevance_citations(db_path='../data/research.db', 
+def get_research_relevance_citations(db_path='../data/db.sqlite3', 
                                      plot=False):
     """ counts the number of citations per SUC
     

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sqlite3
 from sqlalchemy import create_engine
 
-def get_regional_development_table(db_path='../data/research.db',
+def get_regional_development_table(db_path='../data/db.sqlite3',
                                  show=False):
     """ outputs a table with columns: title, author, university, budget, 
         funding agency, source, funding type
