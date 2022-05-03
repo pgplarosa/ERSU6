@@ -206,8 +206,10 @@ def get_research_cost_budget_line(db_path='../data/db.sqlite3',
     df = df.sort_values(by='allocated_budget', ascending=False)
     df = df.set_index('title')
     df = df.groupby('year')['allocated_budget'].sum()
+    df.index = df.index.astype(int)
 
     if plot:
         df.plot()
         plt.show()
+
     return df.to_json(orient='columns')
