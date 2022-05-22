@@ -123,10 +123,11 @@ def get_research_cost_funding_type(db_path='../data/db.sqlite3',
     with engine.connect() as conn:
         df = pd.read_sql(query, conn)
     
+    
     df = df.set_index('funding_type').T
     
     if plot:
-        df.plot.barh(stacked=True)
+        df.plot.barh()
         plt.show()
 
     return df.to_json(orient='columns')

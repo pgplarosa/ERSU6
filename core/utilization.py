@@ -68,9 +68,51 @@ def get_utilization_product_univ(db_path='../data/db.sqlite3',
 
     df = pd.crosstab(df.University, 
                      df.Product).sort_index(ascending=False)
+    
+    df = df.sum(axis=1)
     if plot:
-        df.plot.barh(stacked=True)
+        df.plot.barh()
         plt.show()
+        
+    return df.to_json(orient='columns')
+
+def get_utilization_product_univ_break(school_name,
+                                 db_path='../data/db.sqlite3',
+                                 show=False):
+    """ count the number of product/service type for a university
+    
+    Parameters
+    ===========
+    db_path      :      str
+                        path of sqlite database
+    show         :      bool
+                        display table if set to true
+                        
+    Returns
+    ===========
+    get_utilization_product_univ    :   str
+                                        json string
+    """
+    engine = create_engine('sqlite:///' + db_path)
+    query = f"""
+    SELECT  ut.product_service as Product,
+            sc.school_name as University
+    FROM utilization ut
+    LEFT JOIN school sc
+    ON ut.school_id = sc.school_id
+    WHERE University = "{school_name}"
+    """
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
+
+    df = pd.crosstab(df.University, 
+                     df.Product).sort_index(ascending=False)
+    
+    
+    df = df.T.sort_values(by=school_name, ascending=False)
+    
+    if show:
+        display(df)
         
     return df.to_json(orient='columns')
 

@@ -86,9 +86,59 @@ def get_patent_type_univ(db_path='../data/db.sqlite3',
 
     df = pd.crosstab(df.University, 
                      df['Patent Type']).sort_index(ascending=False)
+    
+    df = df.sum(axis=1)
     if plot:
-        df.plot.barh(stacked=True)
+        df.plot.barh()
         plt.show()
+        
+    return df.to_json(orient='columns')
+
+def get_patent_type_univ_break(school_name, db_path='../data/db.sqlite3',
+                               show=False):
+    """ count the number of research type for university
+    
+    Parameters
+    ===========
+    db_path      :      str
+                        path of sqlite database
+    show         :      bool
+                        display table if set to true
+                        
+    Returns
+    ===========
+    get_patent_type_univ    :   str
+                                json string
+    """
+    engine = create_engine('sqlite:///' + db_path)
+    query = f"""
+    SELECT  pt.patent_filed as `Patent Filed`,
+            pt.patent_type as `Patent Type`,
+            pt.patent_status as Status, 
+            pt.date_register as `Registration Date`,
+            pt.registration_number as `Registration Number`,
+            GROUP_CONCAT(author_name, ";") as Author, 
+            school_name as University
+    FROM patent pt
+    LEFT JOIN author au
+    on pt.author_id = au.author_id
+    LEFT JOIN school sc
+    ON pt.school_id = sc.school_id
+    WHERE University = "{school_name}"
+    GROUP BY `Patent Filed`, `Patent Type`, Status, 
+             `Registration Date`, `Registration Number`, 
+              University
+    """
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
+
+    df = pd.crosstab(df.University, 
+                     df['Patent Type']).sort_index(ascending=False)
+    
+    df = df.T.sort_values(by=school_name, ascending=False)
+    
+    if show:
+        display(df)
         
     return df.to_json(orient='columns')
 
